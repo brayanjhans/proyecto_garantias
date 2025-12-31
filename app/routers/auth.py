@@ -90,14 +90,14 @@ def login(
     if not user or not verify_password(credentials.password, user.password_hash):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Incorrect username or password",
+            detail="Usuario o contraseña incorrectos",
             headers={"WWW-Authenticate": "Bearer"},
         )
     
     if not user.activo:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Inactive user account"
+            detail="Cuenta de usuario inactiva"
         )
     
     # Create access token
