@@ -267,8 +267,8 @@ function LoginModal({ onClose }: { onClose: () => void }) {
                         </div>
 
                         {error && (
-                            <div className="bg-red-500/20 backdrop-blur-md border border-red-500/30 text-red-100 px-4 py-3 rounded-xl text-sm flex items-center gap-3 animate-in slide-in-from-top-2 shadow-lg shadow-red-500/10">
-                                <div className="w-2 h-2 rounded-full bg-red-400 shrink-0 shadow-[0_0_10px_rgba(248,113,113,0.5)]"></div>
+                            <div className="bg-red-100 border border-red-200 text-red-800 px-4 py-3 rounded-xl text-sm flex items-center gap-3 animate-in slide-in-from-top-2 shadow-sm font-medium">
+                                <div className="w-2 h-2 rounded-full bg-red-600 shrink-0 animate-pulse"></div>
                                 {error}
                             </div>
                         )}
