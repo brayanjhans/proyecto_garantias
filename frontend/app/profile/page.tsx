@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { User, Mail, Briefcase, Camera, Key, Lock, Shield, Smartphone, PenLine, ChevronRight, Save, X, MoreVertical, Trash2, Edit, ShieldAlert, Plus, Search } from 'lucide-react';
+import { User, Mail, Briefcase, Camera, Key, Lock, Shield, Smartphone, PenLine, ChevronRight, Save, X, MoreVertical, Trash2, Edit, ShieldAlert, Plus, Search, Loader2 } from 'lucide-react';
 import { HeaderActions } from '@/components/layout/header-actions';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { PinVerificationModal } from '@/components/admin/pin-verification-modal';
 import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
+import { api } from '@/lib/api';
 
 export default function ProfilePage() {
     const [user, setUser] = useState<any>(null);
@@ -24,7 +25,7 @@ export default function ProfilePage() {
 
     if (loading) return null;
 
-    const isAdminOrDirector = user?.role === 'admin' || user?.role === 'director';
+    const isAdminOrDirector = user?.role === 'admin' || user?.role === 'director' || user?.role === 'DIRECTOR' || user?.role === 'ADMIN';
 
     return (
         <div className="min-h-screen bg-slate-50 dark:bg-[#0F172A] pb-20">
@@ -67,7 +68,7 @@ export default function ProfilePage() {
                                 <p className="text-slate-500 dark:text-slate-400 text-sm mb-4">{user?.email}</p>
                                 <span className={cn(
                                     "px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider",
-                                    user?.role === 'admin' ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"
+                                    isAdminOrDirector ? "bg-purple-100 text-purple-700" : "bg-blue-100 text-blue-700"
                                 )}>
                                     {user?.role || 'Colaborador'}
                                 </span>
@@ -293,20 +294,42 @@ function SecuritySettings() {
 }
 
 function UserManagement({ currentUser }: { currentUser: any }) {
-    // Mock Data for demonstration
-    const [users, setUsers] = useState([
-        { id: 1, nombre: 'Brayan Quispe', email: 'admin@mqs.com', role: 'admin', status: 'active' },
-        { id: 2, nombre: 'Maria Gonzales', email: 'maria@mqs.com', role: 'director', status: 'active' },
-        { id: 3, nombre: 'Juan Perez', email: 'juan@mqs.com', role: 'colaborador', status: 'active' },
-        { id: 4, nombre: 'Ana Lopez', email: 'ana@mqs.com', role: 'colaborador', status: 'inactive' },
-    ]);
+    const [users, setUsers] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [showPinModal, setShowPinModal] = useState(false);
     const [userToDelete, setUserToDelete] = useState<any>(null);
+    const [editingUser, setEditingUser] = useState<any>(null);
+    const [resettingPasswordUser, setResettingPasswordUser] = useState<any>(null);
+
+    const fetchUsers = async () => {
+        setLoading(true);
+        try {
+            // Try fetch from primary users endpoint (directors)
+            let response = await api.get('/api/users/');
+            setUsers(response.data);
+        } catch (error: any) {
+            console.error("Failed to fetch from /api/users/", error);
+            try {
+                // Fallback to auth users endpoint if available/appropriate
+                const response = await api.get('/api/auth/users');
+                setUsers(response.data);
+            } catch (err2) {
+                console.error("Failed to fetch users", err2);
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchUsers();
+    }, []);
 
     const filteredUsers = users.filter(user =>
-        user.nombre.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+        (user.nombre?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (user.email?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
+        (user.id_corporativo?.toLowerCase() || '').includes(searchTerm.toLowerCase())
     );
 
     const handleDeleteClick = (user: any) => {
@@ -315,15 +338,23 @@ function UserManagement({ currentUser }: { currentUser: any }) {
     };
 
     const handlePinVerify = async (pin: string) => {
-        // Here you would verify the PIN with your backend
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Simulate API call
-        if (pin === '123456') { // Mock PIN check
-            setUsers(users.filter(u => u.id !== userToDelete.id));
-            setShowPinModal(false);
-            setUserToDelete(null);
-            return true;
+        try {
+            // Verify PIN
+            await api.post('/api/auth/verify-pin', { pin });
+
+            // Delete User
+            if (userToDelete) {
+                await api.delete(`/api/users/${userToDelete.id}`);
+                setUsers(users.filter(u => u.id !== userToDelete.id));
+                setUserToDelete(null);
+                setShowPinModal(false);
+                return true;
+            }
+        } catch (error: any) {
+            console.error("Error verifying PIN or deleting user", error);
+            throw new Error(error.response?.data?.detail || "Error de verificación");
         }
-        return false; // Invalid PIN
+        return false;
     };
 
     return (
@@ -331,7 +362,7 @@ function UserManagement({ currentUser }: { currentUser: any }) {
             <div className="flex items-center justify-between">
                 <div>
                     <h3 className="text-xl font-bold text-slate-900 dark:text-white">Administración de Usuarios</h3>
-                    <p className="text-slate-500 dark:text-slate-400 text-sm">Gestiona cuentas, contraseñas y accesos. Requiere privilegios de Admin.</p>
+                    <p className="text-slate-500 dark:text-slate-400 text-sm">Gestiona cuentas, contraseñas y accesos. Requiere privilegios de Admin/Director.</p>
                 </div>
                 <Button className="bg-purple-600 hover:bg-purple-700 text-white gap-2 rounded-xl">
                     <Plus className="w-4 h-4" /> Nuevo Usuario
@@ -343,7 +374,7 @@ function UserManagement({ currentUser }: { currentUser: any }) {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
                 <input
                     type="text"
-                    placeholder="Buscar usuarios por nombre o correo..."
+                    placeholder="Buscar por nombre, correo o ID..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="w-full pl-10 p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all font-medium text-slate-700 dark:text-slate-200"
@@ -351,7 +382,13 @@ function UserManagement({ currentUser }: { currentUser: any }) {
             </div>
 
             {/* Users Table */}
-            <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm">
+            <div className="overflow-hidden rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm relative min-h-[200px]">
+                {loading ? (
+                    <div className="absolute inset-0 flex items-center justify-center bg-white/50 dark:bg-slate-900/50 backdrop-blur-sm z-10">
+                        <Loader2 className="w-8 h-8 animate-spin text-purple-600" />
+                    </div>
+                ) : null}
+
                 <table className="w-full text-left text-sm">
                     <thead className="bg-slate-50 dark:bg-slate-900/50 text-slate-500 dark:text-slate-400 font-semibold uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
                         <tr>
@@ -362,15 +399,26 @@ function UserManagement({ currentUser }: { currentUser: any }) {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 dark:divide-slate-800 bg-white dark:bg-slate-800">
+                        {filteredUsers.length === 0 && !loading && (
+                            <tr>
+                                <td colSpan={4} className="p-8 text-center text-slate-500">
+                                    No se encontraron usuarios.
+                                </td>
+                            </tr>
+                        )}
                         {filteredUsers.map((user) => (
                             <tr key={user.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
                                 <td className="p-4 pl-6">
                                     <div className="flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 border border-slate-200 dark:border-slate-600">
-                                            {user.nombre.charAt(0)}
+                                        <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center font-bold text-slate-500 border border-slate-200 dark:border-slate-600 overflow-hidden">
+                                            {user.avatar_url ? (
+                                                <img src={user.avatar_url} alt={user.nombre} className="w-full h-full object-cover" />
+                                            ) : (
+                                                user.nombre?.charAt(0) || 'U'
+                                            )}
                                         </div>
                                         <div>
-                                            <p className="font-bold text-slate-900 dark:text-white">{user.nombre}</p>
+                                            <p className="font-bold text-slate-900 dark:text-white">{user.nombre} {user.apellidos || ''}</p>
                                             <p className="text-xs text-slate-500 dark:text-slate-400">{user.email}</p>
                                         </div>
                                     </div>
@@ -378,24 +426,24 @@ function UserManagement({ currentUser }: { currentUser: any }) {
                                 <td className="p-4">
                                     <span className={cn(
                                         "px-2.5 py-1 rounded-full text-xs font-bold uppercase tracking-wide border",
-                                        user.role === 'admin' ? "bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800" :
-                                            user.role === 'director' ? "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800" :
+                                        (user.role || user.perfil) === 'DIRECTOR' || (user.role || user.perfil) === 'admin' ? "bg-purple-100 text-purple-700 border-purple-200 dark:bg-purple-900/30 dark:text-purple-300 dark:border-purple-800" :
+                                            (user.role || user.perfil) === 'ANALISTA' ? "bg-blue-100 text-blue-700 border-blue-200 dark:bg-blue-900/30 dark:text-blue-300 dark:border-blue-800" :
                                                 "bg-slate-100 text-slate-700 border-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:border-slate-700"
                                     )}>
-                                        {user.role}
+                                        {user.role || user.perfil}
                                     </span>
                                 </td>
                                 <td className="p-4">
                                     <div className="flex items-center gap-2">
                                         <span className={cn(
                                             "w-2.5 h-2.5 rounded-full animate-pulse",
-                                            user.status === 'active' ? "bg-green-500" : "bg-red-500"
+                                            user.activo ? "bg-green-500" : "bg-red-500"
                                         )}></span>
                                         <span className={cn(
                                             "text-sm font-medium",
-                                            user.status === 'active' ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"
+                                            user.activo ? "text-green-700 dark:text-green-400" : "text-red-700 dark:text-red-400"
                                         )}>
-                                            {user.status === 'active' ? 'Activo' : 'Inactivo'}
+                                            {user.activo ? 'Activo' : 'Inactivo'}
                                         </span>
                                     </div>
                                 </td>
@@ -408,10 +456,16 @@ function UserManagement({ currentUser }: { currentUser: any }) {
                                         </DropdownMenu.Trigger>
                                         <DropdownMenu.Portal>
                                             <DropdownMenu.Content className="min-w-[180px] bg-white dark:bg-slate-800 rounded-xl shadow-xl border border-slate-100 dark:border-slate-700 p-1.5 animate-in zoom-in-95 duration-200 z-50 mr-8">
-                                                <DropdownMenu.Item className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer outline-none font-medium transition-colors">
+                                                <DropdownMenu.Item
+                                                    onSelect={() => setEditingUser(user)}
+                                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer outline-none font-medium transition-colors"
+                                                >
                                                     <Edit className="w-4 h-4 text-blue-500" /> Editar información
                                                 </DropdownMenu.Item>
-                                                <DropdownMenu.Item className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer outline-none font-medium transition-colors">
+                                                <DropdownMenu.Item
+                                                    onSelect={() => setResettingPasswordUser(user)}
+                                                    className="flex items-center gap-2 px-3 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-lg cursor-pointer outline-none font-medium transition-colors"
+                                                >
                                                     <Key className="w-4 h-4 text-amber-500" /> Restablecer clave
                                                 </DropdownMenu.Item>
                                                 <div className="h-px bg-slate-100 dark:bg-slate-700 my-1" />
@@ -438,7 +492,66 @@ function UserManagement({ currentUser }: { currentUser: any }) {
                 title="Confirmar Eliminación"
                 description={userToDelete ? `Para eliminar al usuario ${userToDelete.nombre}, ingresa tu PIN de seguridad personal.` : ''}
             />
+
+            {editingUser && <EditUserDialog open={!!editingUser} user={editingUser} onClose={() => { setEditingUser(null); fetchUsers(); }} />}
+            {resettingPasswordUser && <ResetPasswordDialog open={!!resettingPasswordUser} user={resettingPasswordUser} onClose={() => setResettingPasswordUser(null)} />}
         </div>
     );
 }
 
+function EditUserDialog({ open, user, onClose }: { open: boolean, user: any, onClose: () => void }) {
+    // Implementation placeholder for Edit User Modal
+    // In a real scenario, this would have a form to update user details via PUT /api/users/{id}
+    const [loading, setLoading] = useState(false);
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md animate-in zoom-in-95">
+                <h3 className="text-xl font-bold mb-4 dark:text-white">Editar Usuario</h3>
+                <p className="mb-4 text-slate-600 dark:text-slate-400">Editando a: {user.nombre}</p>
+                {/* Form fields would go here */}
+                <div className="flex justify-end gap-2">
+                    <Button variant="outline" onClick={onClose}>Cancelar</Button>
+                    <Button onClick={() => onClose()}>Guardar (Simulado)</Button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function ResetPasswordDialog({ open, user, onClose }: { open: boolean, user: any, onClose: () => void }) {
+    // Implementation placeholder for Reset Password
+    const [newPassword, setNewPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    const handleReset = async () => {
+        setLoading(true);
+        try {
+            await api.put(`/api/users/${user.id}`, { password: newPassword });
+            onClose();
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 w-full max-w-md animate-in zoom-in-95">
+                <h3 className="text-xl font-bold mb-4 dark:text-white">Restablecer Contraseña</h3>
+                <p className="mb-4 text-slate-600 dark:text-slate-400">Usuario: {user.nombre}</p>
+                <input
+                    type="password"
+                    placeholder="Nueva contraseña"
+                    className="w-full p-3 rounded-xl border mb-4 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                    value={newPassword}
+                    onChange={e => setNewPassword(e.target.value)}
+                />
+                <div className="flex justify-end gap-2">
+                    <Button variant="outline" onClick={onClose}>Cancelar</Button>
+                    <Button onClick={handleReset} disabled={loading}>{loading ? 'Guardando...' : 'Guardar'}</Button>
+                </div>
+            </div>
+        </div>
+    );
+}
