@@ -110,7 +110,6 @@ def login(
     
     new_session = UserSession(
         user_id=user.id,
-        id_corporativo=user.id_corporativo,  # Add id_corporativo from user
         token_hash=hashlib.sha256(access_token.encode()).hexdigest(), # Store token hash
         ip_address=ip_address,
         user_agent=user_agent,
