@@ -303,56 +303,60 @@ function PersonalInfoForm({ user, setUser }: any) {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Nombre Completo</label>
-                    <div className="relative">
-                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <div className="relative group">
+                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-disabled:text-slate-300 w-5 h-5 transition-colors" />
                         <input
                             name="nombre"
                             value={formData.nombre}
                             onChange={handleChange}
                             disabled={!isEditing}
-                            className="w-full pl-10 p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all disabled:opacity-70 disabled:bg-slate-100 dark:disabled:bg-slate-800"
+                            className="w-full pl-10 p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all disabled:bg-slate-50 dark:disabled:bg-slate-900/50 disabled:border-transparent disabled:text-slate-700 dark:disabled:text-slate-300 font-medium"
+                            placeholder="Nombre Completo"
                         />
                     </div>
                 </div>
 
                 <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Nombre de Usuario</label>
-                    <div className="relative">
-                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">@</span>
+                    <div className="relative group">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-disabled:text-slate-300 font-bold w-5 h-5 text-center">@</span>
                         <input
                             name="username"
                             value={formData.username}
                             onChange={handleChange}
                             disabled={!isEditing}
-                            className="w-full pl-8 p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all disabled:opacity-70 disabled:bg-slate-100 dark:disabled:bg-slate-800"
+                            className="w-full pl-10 p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all disabled:bg-slate-50 dark:disabled:bg-slate-900/50 disabled:border-transparent disabled:text-slate-700 dark:disabled:text-slate-300 font-medium"
+                            placeholder="username"
                         />
                     </div>
                 </div>
 
                 <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Correo Electrónico</label>
-                    <div className="relative">
-                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <div className="relative group">
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-disabled:text-slate-300 w-5 h-5 transition-colors" />
                         <input
                             name="email"
                             value={formData.email}
                             onChange={handleChange}
                             disabled={!isEditing}
-                            className="w-full pl-10 p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all disabled:opacity-70 disabled:bg-slate-100 dark:disabled:bg-slate-800"
+                            className="w-full pl-10 p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all disabled:bg-slate-50 dark:disabled:bg-slate-900/50 disabled:border-transparent disabled:text-slate-700 dark:disabled:text-slate-300 font-medium"
+                            placeholder="correo@ejemplo.com"
                         />
                     </div>
                 </div>
 
                 <div className="space-y-2">
                     <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Cargo / Puesto</label>
-                    <div className="relative">
-                        <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                    <div className="relative group">
+                        <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-disabled:text-slate-300 w-5 h-5 transition-colors" />
                         <input
                             name="job_title"
                             value={formData.job_title}
                             onChange={handleChange}
                             disabled={!isEditing}
-                            className="w-full pl-10 p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all disabled:opacity-70 disabled:bg-slate-100 dark:disabled:bg-slate-800"
+                            className="w-full pl-10 p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 outline-none transition-all disabled:bg-slate-50 dark:disabled:bg-slate-900/50 disabled:border-transparent disabled:text-slate-700 dark:disabled:text-slate-300 font-medium"
+                            placeholder="Cargo"
                         />
                     </div>
                 </div>
@@ -982,41 +986,65 @@ function PasswordChangeForm() {
     };
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-6">
             {message.text && (
-                <div className={`p-3 rounded-lg text-sm flex items-center gap-2 ${message.type === 'error' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
-                    {message.text}
+                <div className={`p-4 rounded-xl text-sm flex items-center gap-3 animate-in fade-in slide-in-from-top-2 ${message.type === 'error' ? 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 border border-red-100 dark:border-red-900' : 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400 border border-green-100 dark:border-green-900'}`}>
+                    {message.type === 'error' ? <ShieldAlert className="w-5 h-5 shrink-0" /> : <Shield className="w-5 h-5 shrink-0" />}
+                    <span className="font-medium">{message.text}</span>
                 </div>
             )}
-            <input
-                type="password"
-                placeholder="Contraseña Actual"
-                className="w-full p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20"
-                value={passData.current_password}
-                onChange={(e) => setPassData({ ...passData, current_password: e.target.value })}
-            />
-            <div className="grid grid-cols-2 gap-4">
-                <input
-                    type="password"
-                    placeholder="Nueva Contraseña"
-                    className="w-full p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20"
-                    value={passData.new_password}
-                    onChange={(e) => setPassData({ ...passData, new_password: e.target.value })}
-                />
-                <input
-                    type="password"
-                    placeholder="Confirmar Contraseña"
-                    className="w-full p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-blue-500/20"
-                    value={passData.confirm_password}
-                    onChange={(e) => setPassData({ ...passData, confirm_password: e.target.value })}
-                />
+
+            <div className="space-y-4">
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Contraseña Actual</label>
+                    <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                        <input
+                            type="password"
+                            placeholder="Ingresa tu contraseña actual"
+                            className="w-full pl-10 p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition-all placeholder:text-slate-400"
+                            value={passData.current_password}
+                            onChange={(e) => setPassData({ ...passData, current_password: e.target.value })}
+                        />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Nueva Contraseña</label>
+                        <div className="relative">
+                            <Key className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                            <input
+                                type="password"
+                                placeholder="Nueva contraseña"
+                                className="w-full pl-10 p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition-all placeholder:text-slate-400"
+                                value={passData.new_password}
+                                onChange={(e) => setPassData({ ...passData, new_password: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Confirmar Contraseña</label>
+                        <div className="relative">
+                            <Key className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                            <input
+                                type="password"
+                                placeholder="Repite la nueva contraseña"
+                                className="w-full pl-10 p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:ring-4 focus:ring-blue-500/10 focus:border-blue-600 outline-none transition-all placeholder:text-slate-400"
+                                value={passData.confirm_password}
+                                onChange={(e) => setPassData({ ...passData, confirm_password: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
+
             <Button
                 onClick={handlePasswordChange}
                 disabled={loading}
-                className="bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium"
+                className="w-full md:w-auto bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-medium px-8 shadow-lg shadow-blue-600/20"
             >
-                {loading ? 'Actualizando...' : 'Actualizar Contraseña'}
+                {loading ? <div className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Actualizando...</div> : 'Actualizar Contraseña'}
             </Button>
         </div>
     );
@@ -1055,44 +1083,68 @@ function PinChangeForm() {
     };
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-6">
             {message.text && (
-                <div className={`p-3 rounded-lg text-sm flex items-center gap-2 ${message.type === 'error' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
-                    {message.text}
+                <div className={`p-4 rounded-xl text-sm flex items-center gap-3 animate-in fade-in slide-in-from-top-2 ${message.type === 'error' ? 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400 border border-red-100 dark:border-red-900' : 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400 border border-green-100 dark:border-green-900'}`}>
+                    {message.type === 'error' ? <ShieldAlert className="w-5 h-5 shrink-0" /> : <Shield className="w-5 h-5 shrink-0" />}
+                    <span className="font-medium">{message.text}</span>
                 </div>
             )}
-            <input
-                type="password"
-                placeholder="PIN Actual (6 dígitos)"
-                className="w-full p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-purple-500/20 tracking-widest text-center font-mono"
-                maxLength={6}
-                value={pinData.current_pin}
-                onChange={(e) => setPinData({ ...pinData, current_pin: e.target.value })}
-            />
-            <div className="grid grid-cols-2 gap-4">
-                <input
-                    type="password"
-                    placeholder="Nuevo PIN"
-                    className="w-full p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-purple-500/20 tracking-widest text-center font-mono"
-                    maxLength={6}
-                    value={pinData.new_pin}
-                    onChange={(e) => setPinData({ ...pinData, new_pin: e.target.value })}
-                />
-                <input
-                    type="password"
-                    placeholder="Confirmar PIN"
-                    className="w-full p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 outline-none focus:ring-2 focus:ring-purple-500/20 tracking-widest text-center font-mono"
-                    maxLength={6}
-                    value={pinData.confirm_pin}
-                    onChange={(e) => setPinData({ ...pinData, confirm_pin: e.target.value })}
-                />
+
+            <div className="space-y-4">
+                <div className="space-y-2">
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300">PIN Actual</label>
+                    <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                        <input
+                            type="password"
+                            placeholder="• • • • • •"
+                            className="w-full pl-10 p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:ring-4 focus:ring-purple-500/10 focus:border-purple-600 outline-none transition-all placeholder:text-slate-400 tracking-[0.5em] text-center font-mono"
+                            maxLength={6}
+                            value={pinData.current_pin}
+                            onChange={(e) => setPinData({ ...pinData, current_pin: e.target.value })}
+                        />
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Nuevo PIN</label>
+                        <div className="relative">
+                            <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                            <input
+                                type="password"
+                                placeholder="• • • • • •"
+                                className="w-full pl-10 p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:ring-4 focus:ring-purple-500/10 focus:border-purple-600 outline-none transition-all placeholder:text-slate-400 tracking-[0.5em] text-center font-mono"
+                                maxLength={6}
+                                value={pinData.new_pin}
+                                onChange={(e) => setPinData({ ...pinData, new_pin: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                    <div className="space-y-2">
+                        <label className="text-sm font-medium text-slate-700 dark:text-slate-300">Confirmar PIN</label>
+                        <div className="relative">
+                            <Shield className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+                            <input
+                                type="password"
+                                placeholder="• • • • • •"
+                                className="w-full pl-10 p-3 rounded-xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:ring-4 focus:ring-purple-500/10 focus:border-purple-600 outline-none transition-all placeholder:text-slate-400 tracking-[0.5em] text-center font-mono"
+                                maxLength={6}
+                                value={pinData.confirm_pin}
+                                onChange={(e) => setPinData({ ...pinData, confirm_pin: e.target.value })}
+                            />
+                        </div>
+                    </div>
+                </div>
             </div>
+
             <Button
                 onClick={handlePinChange}
                 disabled={loading}
-                className="bg-purple-600 text-white rounded-xl hover:bg-purple-700 font-medium"
+                className="w-full md:w-auto bg-purple-600 text-white rounded-xl hover:bg-purple-700 font-medium px-8 shadow-lg shadow-purple-600/20"
             >
-                {loading ? 'Actualizando...' : 'Actualizar PIN'}
+                {loading ? <div className="flex items-center gap-2"><Loader2 className="w-4 h-4 animate-spin" /> Actualizando...</div> : 'Actualizar PIN'}
             </Button>
         </div>
     );
