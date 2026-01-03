@@ -18,7 +18,13 @@ app = FastAPI(
 # Configure CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://www.mcqs-jcq.cloud", "https://mcqs-jcq.cloud"],
+    allow_origins=[
+        "https://www.mcqs-jcq.com",
+        "https://mcqs-jcq.com",
+        "https://www.mcqs-jcq.cloud",
+        "https://mcqs-jcq.cloud",
+        "http://localhost:3000"  # For local development
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
