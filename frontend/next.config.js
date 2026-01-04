@@ -2,14 +2,18 @@
 const nextConfig = {
     reactStrictMode: true,
     async rewrites() {
+        const apiUrl = process.env.NODE_ENV === 'production'
+            ? 'https://back.mcqs-jcq.cloud'
+            : 'http://127.0.0.1:8000';
+
         return [
             {
                 source: '/api/:path*',
-                destination: 'http://127.0.0.1:8000/api/:path*',
+                destination: `${apiUrl}/api/:path*`,
             },
             {
                 source: '/formatos/:path*',
-                destination: 'http://127.0.0.1:8000/formatos/:path*',
+                destination: `${apiUrl}/formatos/:path*`,
             },
         ]
     },
