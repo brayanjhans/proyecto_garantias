@@ -2,9 +2,8 @@
 const nextConfig = {
     reactStrictMode: true,
     async rewrites() {
-        const apiUrl = process.env.NODE_ENV === 'development'
-            ? 'http://127.0.0.1:8000'
-            : 'https://back.mcqs-jcq.cloud';
+        // Hardcoded production URL for VPS fix
+        const apiUrl = 'https://back.mcqs-jcq.cloud';
 
         return [
             {
